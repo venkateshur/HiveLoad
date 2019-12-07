@@ -1,0 +1,29 @@
+<coordinator-app name="${jobName}" frequency="${coord:days(1)}" start="2000-01-01T12:00Z" end="3000-01-01T12:00Z" timezone="UTC" xmlns="uri:oozie:coordinator:0.2">
+    <controls>
+        <timeout>-1</timeout>
+        <concurrency>1</concurrency>
+        <execution>FIFO</execution>
+    </controls>
+    <datasets>
+        <dataset name="input_data" frequency="${coord:days(1)}" initial-instance="2000-01-01T12:00Z" timezone="UTC">
+            <uri-template>${nameNode}/user/root/input/</uri-template>
+            <done-flag></done-flag>
+        </dataset>
+    </datasets>
+    <input-events>
+        <data-in name="input_data" dataset="input_data">
+            <instance>2000-01-01T12:00Z</instance>
+        </data-in>
+    </input-events>
+    <action>
+        <workflow>
+            <app-path>${appPath}</app-path>
+            <configuration>
+                <property>
+                    <name>inputPath</name>
+                    <value>${coord:dataIn('inputPath')}</value>
+                </property>
+            </configuration>
+        </workflow>
+    </action>
+</coordinator-app>
