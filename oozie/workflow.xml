@@ -1,0 +1,26 @@
+<workflow-app name="spark-wf" xmlns="uri:oozie:workflow:0.5">
+    <start to="spark-action"/>
+    <action name="spark-action">
+        <spark xmlns="uri:oozie:spark-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <configuration>
+            </configuration>
+            <mode>${mode}</mode>
+            <master>${master}</master>
+            <name>spark-csv-to-parquet</name>
+            <class>com.hiveload.CsvToHiveLoadExternal</class>
+            <jar>${nameNode}/${jarPath}/csvtohiveload-1.0-SNAPSHOT-jar-with-dependencies.jar</jar>
+            <spark-opts>--driver-memory 2g --executor-memory 2g --num-executors 3</spark-opts>
+            <arg>${inputPath}</arg>
+            <arg>${outputPath}</arg>
+            <arg>${delimiter}</arg>
+        </spark>
+        <ok to="end"/>
+        <error to="kill"/>
+    </action>
+    <kill name="kill">
+        <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>
